@@ -1,0 +1,12 @@
+[package]
+name = "enum-debug"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Lut99" ]
+description = "A simple crate that adds the `EnumDebug` trait, which allows one to easily get the variant names of an enum."
+
+[dependencies]
+enum-debug-derive = { path = "../enum-debug-derive", optional = true }
+
+[features]
+derive = [ "dep:enum-debug-derive" ]
