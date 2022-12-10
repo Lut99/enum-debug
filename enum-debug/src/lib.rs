@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:37:39
 //  Last edited:
-//    10 Dec 2022, 14:39:17
+//    10 Dec 2022, 14:56:30
 //  Auto updated?
 //    Yes
 // 
@@ -186,6 +186,24 @@ pub trait EnumDebug {
     /// 
     /// # Returns
     /// A new instance of an EnumDebugFormatter that implements `Debug` and `Display`.
+    /// 
+    /// # Examples
+    /// ```rust
+    /// use enum_debug::EnumDebug;
+    /// 
+    /// #[derive(EnumDebug)]
+    /// #[enum_debug(name)]
+    /// enum Jedi {
+    ///     ObiWanKenobi,
+    ///     AnakinSkywalker,
+    ///     MaceWindu,
+    ///     MasterYoda,
+    /// }
+    /// 
+    /// assert_eq!(format!("{}", Jedi::ObiWanKenobi.variant()), "ObiWanKenobi");
+    /// assert_eq!(format!("{:?}", Jedi::AnakinSkywalker.variant()), "Jedi::AnakinSkywalker");
+    /// assert_eq!(Jedi::MaceWindu.variant().to_string(), "MaceWindu");
+    /// ```
     #[inline]
     fn variant(&self) -> EnumDebugFormatter<'_, Self> {
         EnumDebugFormatter {

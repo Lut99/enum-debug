@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    10 Dec 2022, 14:38:50
+//    10 Dec 2022, 14:55:58
 //  Auto updated?
 //    Yes
 // 
@@ -36,11 +36,11 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                             for l in list.nested {
                                 match l {
                                     NestedMeta::Meta(Meta::Path(path)) => {
-                                        if let Some(ident) = path.get_ident() {
-                                            if ident == "name" {
+                                        if let Some(id) = path.get_ident() {
+                                            if id == "name" {
                                                 fmt_name = Some(format!("{}", ident));
                                             } else {
-                                                panic!("Unknown attribute property '{}'", ident);
+                                                panic!("Unknown attribute property '{}'", id);
                                             }
                                         } else {
                                             panic!("Unknown attribute property '{}'", path.to_token_stream());
@@ -50,7 +50,7 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                                         if name_value.path.segments.len() == 1 && name_value.path.segments[0].ident == "name" {
                                             // Set the literal as the string if it is one
                                             match name_value.lit {
-                                                Lit::Str(name) => { fmt_name = Some(name.value()) },
+                                                Lit::Str(name) => { fmt_name = Some(name.value()); },
                                                 lit            => { panic!("Illegal name '{}' (expected a string)", lit.to_token_stream()); },
                                             }
                                         } else {
