@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:37:39
 //  Last edited:
-//    10 Dec 2022, 14:56:30
+//    21 Jan 2023, 09:14:27
 //  Auto updated?
 //    Yes
 // 
@@ -132,7 +132,7 @@ impl<'this, T: EnumDebug> Display for EnumDebugFormatter<'this, T> {
 /// }
 /// 
 /// assert_eq!(format!("{}", Jedi::ObiWanKenobi.variant()), "ObiWanKenobi");
-/// assert_eq!(format!("{}", Jedi::AnakinSkywalker.variant()), "AnakinSkywalker");
+/// assert_eq!(format!("{:?}", Jedi::AnakinSkywalker.variant()), "Jedi::AnakinSkywalker");
 /// assert_eq!(Jedi::MaceWindu.variant().to_string(), "MaceWindu");
 /// ```
 /// 
@@ -192,7 +192,6 @@ pub trait EnumDebug {
     /// use enum_debug::EnumDebug;
     /// 
     /// #[derive(EnumDebug)]
-    /// #[enum_debug(name)]
     /// enum Jedi {
     ///     ObiWanKenobi,
     ///     AnakinSkywalker,

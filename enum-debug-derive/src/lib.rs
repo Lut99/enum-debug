@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    10 Dec 2022, 14:55:58
+//    21 Jan 2023, 09:12:50
 //  Auto updated?
 //    Yes
 // 
@@ -26,8 +26,11 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
     // Match what we're parsing
     match data {
         Data::Enum(e) => {
+            // Create the default name
+            let name : String = ident.to_string();
+            let mut name      = quote!(#name).into();
+
             // Find if we also have to derive the thing
-            let mut fmt_name: Option<String> = None;
             for attr in attrs {
                 match attr.parse_meta() {
                     Ok(Meta::List(list)) => {
@@ -37,9 +40,10 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                                 match l {
                                     NestedMeta::Meta(Meta::Path(path)) => {
                                         if let Some(id) = path.get_ident() {
-                                            if id == "name" {
-                                                fmt_name = Some(format!("{}", ident));
-                                            } else {
+                                            if id == "path" {
+                                                // Override with the path
+                                                name = quote!("{}", ::std::any::type_name::<Self>());
+                                            } else if id != "name" {
                                                 panic!("Unknown attribute property '{}'", id);
                                             }
                                         } else {
@@ -50,8 +54,8 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                                         if name_value.path.segments.len() == 1 && name_value.path.segments[0].ident == "name" {
                                             // Set the literal as the string if it is one
                                             match name_value.lit {
-                                                Lit::Str(name) => { fmt_name = Some(name.value()); },
-                                                lit            => { panic!("Illegal name '{}' (expected a string)", lit.to_token_stream()); },
+                                                Lit::Str(set_name) => { let set_name = set_name.value(); name = quote!(#set_name); },
+                                                lit                => { panic!("Illegal name '{}' (expected a string literal)", lit.to_token_stream()); },
                                             }
                                         } else {
                                             panic!("Unknown attribute property '{}'", name_value.to_token_stream());
@@ -70,13 +74,11 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
             }
 
             // Generate a proper implementation if there is a name to set
-            let fmt_name = fmt_name.map(|name| {
-                quote!{
-                    fn fmt_type_name(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-                        write!(f, #name)
-                    }
+            let fmt_name = quote!{
+                fn fmt_type_name(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+                    ::std::write!(f, #name)
                 }
-            });
+            };
 
             // Find the variants
             let variants: Vec<&Ident> = e.variants.iter().map(|v| &v.ident).collect();
@@ -86,7 +88,7 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                 impl enum_debug::EnumDebug for #ident {
                     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
                         match self {
-                            #(#ident::#variants{ .. } => write!(f, stringify!(#variants)),)*
+                            #(#ident::#variants{ .. } => ::std::write!(f, ::std::stringify!(#variants)),)*
                         }
                     }
 
