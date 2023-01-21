@@ -1,6 +1,6 @@
 [package]
 name = "enum-debug"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = [ "Lut99" ]
 description = "A simple crate that adds the `EnumDebug` trait, which allows one to easily get the variant names of an enum."

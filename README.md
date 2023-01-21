@@ -79,7 +79,7 @@ enum Jedi {
 }
 ```
 
-If you specify just `#[enum_debug(name)]`, then the exact same name as the literal identifier is used (this is useful in case the default implementation generates paths you don't want, e.g., `test_module::Jedi` instead of `Jedi`).
+You can also specify `#[enum_debug(path)]` to generate the name as a full path, to help disambiguate if you have multiple classes with the same name in different files. Alternatively, for legacy reasons (when the path was the default behaviour), if you just specify `#[enum_debug(name)]`, then the exact same name as the literal identifier is used.
 
 With the trait implemented, you can then use it to get the variant name:
 ```rust
