@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    21 Jan 2023, 09:12:50
+//    28 Jan 2023, 13:52:42
 //  Auto updated?
 //    Yes
 // 
@@ -21,7 +21,7 @@ use syn::{parse_macro_input, Data, DeriveInput, Ident, Lit, Meta, NestedMeta};
 /// Does the derivation for the EnumDebug.
 #[proc_macro_derive(EnumDebug, attributes(enum_debug))]
 pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
-    let DeriveInput{ ident, data, attrs, .. } = parse_macro_input!(input);
+    let DeriveInput{ ident, data, attrs, generics, .. } = parse_macro_input!(input);
 
     // Match what we're parsing
     match data {
@@ -83,9 +83,10 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
             // Find the variants
             let variants: Vec<&Ident> = e.variants.iter().map(|v| &v.ident).collect();
 
-            // Emit the enum itself
+            // Emit the enum itself, either with generics or without
+            let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
             quote!{
-                impl enum_debug::EnumDebug for #ident {
+                impl #impl_generics enum_debug::EnumDebug for #ident #ty_generics #where_clause {
                     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
                         match self {
                             #(#ident::#variants{ .. } => ::std::write!(f, ::std::stringify!(#variants)),)*
