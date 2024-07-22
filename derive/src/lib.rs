@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    23 Jul 2024, 00:04:06
+//    23 Jul 2024, 00:06:39
 //  Auto updated?
 //    Yes
 //
@@ -56,14 +56,11 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                 for meta in metas {
                     match meta {
                         Meta::Path(path) => {
-                            if let Some(id) = path.get_ident() {
-                                if id == "path" {
-                                    // Override with the path
-                                    name = quote!(::std::any::type_name::<Self>());
-                                } else {
-                                    Diagnostic::spanned(path.span(), Level::Error, format!("Unknown attribute property '{}'", id)).abort();
-                                }
-                            } else {
+                            if path.is_ident("path") {
+                                // Override with the path
+                                name = quote!(::std::any::type_name::<Self>());
+                            // NOTE: Legacy here, path used to be the default but now `name` is no change compared to default behaviour
+                            } else if !path.is_ident("name") {
                                 Diagnostic::spanned(path.span(), Level::Error, format!("Unknown attribute property '{}'", path.to_token_stream()))
                                     .abort();
                             }
