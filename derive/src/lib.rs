@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    22 Jul 2024, 23:42:43
+//    23 Jul 2024, 00:04:06
 //  Auto updated?
 //    Yes
 //
@@ -37,11 +37,19 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
 
             // Find if we also have to derive the thing
             for attr in attrs {
+                // Only do our own
+                if !attr.path().is_ident("enum_debug") {
+                    continue;
+                }
+
                 // Attempt to parse the list
                 let metas: Punctuated<Meta, Comma> = match attr.parse_args_with(Punctuated::parse_terminated) {
                     Ok(metas) => metas,
                     // Not for us
-                    Err(_) => continue,
+                    Err(err) => {
+                        Diagnostic::spanned(err.span(), Level::Error, "Failed to parse `enum_debug(...)` arguments as valid attributes".into())
+                            .abort()
+                    },
                 };
 
                 // Parse the attributes
