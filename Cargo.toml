@@ -1,5 +1,33 @@
+[package]
+name = "enum-debug"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "A simple crate that adds the `EnumDebug` trait, which allows one to easily get the variant names of an enum."
+
+
+[[example]]
+name = "derive"
+path = "examples/derive.rs"
+required-features = ["derive"]
+
+
+[dependencies]
+enum-debug-derive = { path = "./derive", optional = true }
+
+
+[features]
+derive = [ "dep:enum-debug-derive" ]
+
+
 [workspace]
 members = [
-    "enum-debug",
-    "enum-debug-derive",
+    "derive",
 ]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+authors = ["Lut99"]
+repository = "https://github.com/Lut99/enum-debug"

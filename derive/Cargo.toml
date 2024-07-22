@@ -1,0 +1,17 @@
+[package]
+name = "enum-debug-derive"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Implements `#[derive(EnumDebug)]` for the `enum-debug` crate."
+
+
+[lib]
+proc-macro = true
+
+
+[dependencies]
+proc-macro-error = "1.0"
+quote = "1.0"
+syn   = { version = "2.0", features = ["derive", "printing"] }
