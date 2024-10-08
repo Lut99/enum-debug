@@ -4,8 +4,11 @@ This file keeps track of the changes done in each version of the `enum-debug` cr
 Note that this project uses [semantic versioning](https://semver.org). As such, breaking changes are indicated as **(BREAKING)**.
 
 
-## 1.1.0 - TODO
-### Changed
+## 1.1.0 - 2024-09-08
+### Added
+- `license`-tags to the main `Cargo.toml` file, also for the `enum-debug-derive`-crate.
+
+### Fixed
 - No longer using `proc-macro-error` to generate macro errors as it is no longer maintained. Relying on `syn` errors instead.
 
 
