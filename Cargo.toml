@@ -5,6 +5,7 @@ edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 description = "A simple crate that adds the `EnumDebug` trait, which allows one to easily get the variant names of an enum."
+license.workspace = true
 
 
 [[example]]
@@ -31,3 +32,5 @@ version = "1.0.0"
 edition = "2021"
 authors = ["Lut99"]
 repository = "https://github.com/Lut99/enum-debug"
+license = "Apache-2.0"
+

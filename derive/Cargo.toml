@@ -5,6 +5,7 @@ edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 description = "Implements `#[derive(EnumDebug)]` for the `enum-debug` crate."
+license.workspace = true
 
 
 [lib]
