@@ -4,7 +4,7 @@
 //  Created:
 //    10 Dec 2022, 11:57:28
 //  Last edited:
-//    23 Jul 2024, 00:06:39
+//    08 Oct 2024, 15:13:58
 //  Auto updated?
 //    Yes
 //
@@ -13,7 +13,6 @@
 //
 
 use proc_macro::TokenStream;
-use proc_macro_error::{proc_macro_error, Diagnostic, Level};
 use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned as _;
@@ -21,9 +20,20 @@ use syn::token::Comma;
 use syn::{parse_macro_input, Data, DeriveInput, Expr, ExprLit, Ident, Lit, Meta};
 
 
+/***** HELPER MACROS *****/
+/// Throws a [`syn::Error`].
+macro_rules! err {
+    ($span:expr, $message:expr) => {
+        syn::Error::new($span, $message).into_compile_error().into()
+    };
+}
+
+
+
+
+
 /***** LIBRARY *****/
 /// Does the derivation for the EnumDebug.
-#[proc_macro_error]
 #[proc_macro_derive(EnumDebug, attributes(enum_debug))]
 pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, data, attrs, generics, .. } = parse_macro_input!(input);
@@ -47,8 +57,7 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                     Ok(metas) => metas,
                     // Not for us
                     Err(err) => {
-                        Diagnostic::spanned(err.span(), Level::Error, "Failed to parse `enum_debug(...)` arguments as valid attributes".into())
-                            .abort()
+                        return err!(err.span(), "Failed to parse `enum_debug(...)` arguments as valid attributes");
                     },
                 };
 
@@ -61,8 +70,7 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                                 name = quote!(::std::any::type_name::<Self>());
                             // NOTE: Legacy here, path used to be the default but now `name` is no change compared to default behaviour
                             } else if !path.is_ident("name") {
-                                Diagnostic::spanned(path.span(), Level::Error, format!("Unknown attribute property '{}'", path.to_token_stream()))
-                                    .abort();
+                                return err!(path.span(), format!("Unknown attribute property '{}'", path.to_token_stream()));
                             }
                         },
                         Meta::NameValue(name_value) => {
@@ -74,20 +82,16 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
                                         name = quote!(#set_name);
                                     },
                                     expr => {
-                                        Diagnostic::spanned(expr.span(), Level::Error, "Name must be a string literal".into());
+                                        return err!(expr.span(), "Name must be a string literal");
                                     },
                                 }
                             } else {
-                                Diagnostic::spanned(
-                                    name_value.path.span(),
-                                    Level::Error,
-                                    format!("Unknown attribute property '{}'", name_value.path.to_token_stream()),
-                                );
+                                return err!(name_value.path.span(), format!("Unknown attribute property '{}'", name_value.path.to_token_stream()));
                             }
                         },
 
                         l => {
-                            Diagnostic::spanned(l.span(), Level::Error, format!("Unknown attribute property '{}'", l.to_token_stream()));
+                            return err!(l.span(), format!("Unknown attribute property '{}'", l.to_token_stream()));
                         },
                     }
                 }
@@ -121,7 +125,7 @@ pub fn derive_enum_debug(input: TokenStream) -> TokenStream {
 
         // Can only do enums, clearly
         _ => {
-            Diagnostic::spanned(ident.span(), Level::Error, "EnumDebug can only be derived on enums".into()).abort();
+            err!(ident.span(), "EnumDebug can only be derived on enums")
         },
     }
 }

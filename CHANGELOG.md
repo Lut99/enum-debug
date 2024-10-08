@@ -4,6 +4,11 @@ This file keeps track of the changes done in each version of the `enum-debug` cr
 Note that this project uses [semantic versioning](https://semver.org). As such, breaking changes are indicated as **(BREAKING)**.
 
 
+## 1.1.0 - TODO
+### Changed
+- No longer using `proc-macro-error` to generate macro errors as it is no longer maintained. Relying on `syn` errors instead.
+
+
 ## 1.0.0 - 2024-07-22
 IMPORTANT NOTICE: Now using the Apache 2.0 license. See [`LICENSE`](./LICENSE) for more details.
 
